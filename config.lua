@@ -44,7 +44,7 @@ lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 lvim.builtin.terminal.shell = "/usr/bin/zsh"
 
 -- ColorScheme:
-lvim.colorscheme = "melange"
+lvim.colorscheme = "zephyr"
 vim.g.tokyonight_italic_keywords = false
 vim.g.tokyonight_italic_functions = false
 -- lvim.builtin.theme.options.style = "OceanicNext"
@@ -119,21 +119,26 @@ lvim.builtin.which_key.mappings.Q = {
 -- Space + R = Rust Tools Panel
 -- Space + R + F = Add rustfmt.toml Into Project (Requires a rustfmt.toml file in $HOME/Templates/)
 
-lvim.builtin.which_key.mappings.R = {
-  name = "Rust Tools",
-  F = {
-    "<cmd>lua require('my_utils').copy_file('~/Templates/rustfmt.toml', './rustfmt.toml')<CR>",
-    "Add rustfmt.toml"
-  },
-}
+-- lvim.builtin.which_key.mappings.R = {
+--   name = "Rust Tools",
+--   F = {
+--     "<cmd>lua require('my_utils').copy_file('~/Templates/rustfmt.toml', './rustfmt.toml')<CR>",
+--     "Add rustfmt.toml"
+--   },
+-- }
 --------------------------------------------------------------------------------------
 
 -- TREESITTER ------------------------------------------------------------------------
-lvim.builtin.treesitter.ensure_installed = { "bash", "c", "javascript", "json", "lua", "python", "typescript", "tsx",
-  "css", "rust", "java", "yaml", "go" }
+lvim.builtin.treesitter.ensure_installed = { "bash", "python", "c", "javascript", "lua", "typescript", "tsx", "rust",
+  "toml" }
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enable = true
 lvim.builtin.treesitter.rainbow.enable = true
+lvim.builtin.treesitter.highlight.additional_vim_regex_highlighting = false
+
+-- Enable Auto Treesitter Folding
+-- vim.wo.foldmethod = 'expr'
+-- vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
 --------------------------------------------------------------------------------------
 
 -- FORMATTERS ------------------------------------------------------------------------
@@ -170,6 +175,50 @@ lvim.plugins = {
   { "folke/trouble.nvim", cmd = "TroubleToggle" },
   { "glepnir/zephyr-nvim", requires = { 'nvim-treesitter/nvim-treesitter', opt = true } },
   {
+    "folke/todo-comments.nvim",
+    requires = "nvim-lua/plenary.nvim",
+    config = function()
+      require("todo-comments").setup {
+        signs = true,
+        keywords = {
+          FIX = {
+            icon = " ",
+            color = "error",
+            alt = { "FIXME", "BUG", "FIXIT", "ISSUE" },
+          },
+          TODO = { icon = " ", color = "info" },
+          HACK = { icon = " ", color = "warning" },
+          WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
+          PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
+          NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
+        },
+
+        colors = {
+          error = { "LspDiagnosticsDefaultError", "ErrorMsg", "#DC2626" },
+          warning = { "LspDiagnosticsDefaultWarning", "WarningMsg", "#FBBF24" },
+          info = { "LspDiagnosticsDefaultInformation", "#2563EB" },
+          hint = { "LspDiagnosticsDefaultHint", "#10B981" },
+          default = { "Identifier", "#7C3AED" },
+        },
+
+        search = {
+          command = "rg",
+          args = {
+            "--color=never",
+            "--no-heading",
+            "--with-filename",
+            "--line-number",
+            "--column",
+            "--smart-case",
+          },
+          -- regex that will be used to match keywords.
+          -- don't replace the (KEYWORDS) placeholder
+          pattern = [[\b(KEYWORDS):]],
+        },
+      }
+    end
+  },
+  {
     "simrat39/rust-tools.nvim",
     config = function()
       require("rust-tools").setup {
@@ -177,7 +226,7 @@ lvim.plugins = {
           autoSetHints = true,
           runnables = { use_telescope = true },
           inlay_hints = {
-            auto                   = true,
+            auto                   = false,
             show_parameter_hints   = true,
             parameter_hints_prefix = "<- ",
             other_hints_prefix     = "=> ",
@@ -276,6 +325,39 @@ lvim.builtin.cmp.formatting.source_names["copilot"] = "(Copilot)"
 table.insert(lvim.builtin.cmp.sources, 1, { name = "copilot" })
 --------------------------------------------------------------------------------------
 
+-- LSP Diagnostics Options Setup -----------------------------------------------------
+local sign = function(opts)
+  vim.fn.sign_define(opts.name, {
+    text = opts.text,
+    texthl = opts.name,
+    numhl = '',
+  })
+end
+
+sign({ name = 'DiagnosticSignError', text = '' })
+sign({ name = 'DiagnosticSignWarn', text = '' })
+sign({ name = 'DiagnosticSignHint', text = '' })
+sign({ name = 'DiagnosticSignInfo', text = '' })
+
+vim.diagnostic.config({
+  virtual_text = false,
+  signs = true,
+  update_in_insert = true,
+  underline = true,
+  severity_sort = false,
+  float = {
+    border = 'rounded',
+    source = 'always',
+    header = '',
+    prefix = '',
+  },
+})
+
+-- vim.cmd([[
+-- set signcolumn=yes
+-- autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
+-- ]])
+--------------------------------------------------------------------------------------
 
 -- ADDITIONAL CONFIG OPTIONS ---------------------------------------------------------
 --
