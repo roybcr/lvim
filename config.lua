@@ -44,7 +44,9 @@ lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 lvim.builtin.terminal.shell = "/usr/bin/zsh"
 
 -- ColorScheme:
-lvim.colorscheme = "zephyr"
+-- To set Tokyonight simply uncomment the line below
+lvim.colorscheme = "melange"
+-- lvim.builtin.tokyonight.style = "night"
 vim.g.tokyonight_italic_keywords = false
 vim.g.tokyonight_italic_functions = false
 -- lvim.builtin.theme.options.style = "OceanicNext"
@@ -160,10 +162,18 @@ formatters.setup {
 -- PLUGINS ---------------------------------------------------------------------------
 --
 -- Rust Tools:
-local function on_attach(_, _) -- on_attach(client, bufnr)
-  -- This callback is called when the LSP is atttached/enabled for this buffer
-  -- we could set keymaps related to LSP, etc here.
-end
+
+-- local rust_tools = require("rust-tools")
+
+-- on attach
+
+-- local function on_attach(_, bufnr)
+--   -- This callback is called when the LSP is atttached/enabled for this buffer
+--   -- we could set keymaps related to LSP, etc here.
+--   vim.keymap.set("n", "<C-space>", rust_tools.hover_actions.hover_actions, { buffer = bufnr })
+--   vim.keymap.set({ 'n', 'v' }, "<C-a>", rt.code_action_group.code_action_group, { buffer = bufnr })
+--   -- your custom on attach
+-- end
 
 lvim.plugins = {
   { "savq/melange" },
@@ -218,37 +228,40 @@ lvim.plugins = {
       }
     end
   },
-  {
-    "simrat39/rust-tools.nvim",
-    config = function()
-      require("rust-tools").setup {
-        tools = { -- rust-tools options
-          autoSetHints = true,
-          runnables = { use_telescope = true },
-          inlay_hints = {
-            auto                   = false,
-            show_parameter_hints   = true,
-            parameter_hints_prefix = "<- ",
-            other_hints_prefix     = "=> ",
-          },
-        },
-        server = {
-          on_attach = on_attach,
-          settings = {
-            ["rust-analyzer"] = {
-              checkOnSave = { command = "clippy" },
-              assist = {
-                importGranularity = "module",
-                importPrefix = "by_self",
-              },
-              cargo = { loadOutDirsFromCheck = true },
-              procMacro = { enable = true }
-            }
-          }
-        } -- rust-analyzer options
-      }
-    end
-  },
+  -- {
+  --   "simrat39/rust-tools.nvim",
+  --   config = function()
+  --     require("rust-tools").setup {
+  --       tools = { -- rust-tools options
+  --         autoSetHints = true,
+  --         runnables = { use_telescope = true },
+  --         inlay_hints = {
+  --           auto                   = false,
+  --           show_parameter_hints   = true,
+  --           parameter_hints_prefix = "<- ",
+  --           other_hints_prefix     = "=> ",
+  --         },
+  --         hover_actions = {
+  --           auto_focus = true,
+  --         },
+  --       },
+  --       server = {
+  --         on_attach = on_attach,
+  --         settings = {
+  --           ["rust-analyzer"] = {
+  --             checkOnSave = { command = "clippy" },
+  --             assist = {
+  --               importGranularity = "module",
+  --               importPrefix = "by_self",
+  --             },
+  --             cargo = { loadOutDirsFromCheck = true },
+  --             procMacro = { enable = true }
+  --           }
+  --         }
+  --       } -- rust-analyzer options
+  --     }
+  --   end
+  -- },
   { "saecki/crates.nvim",
     tag = 'v0.3.0',
     requires = { 'nvim-lua/plenary.nvim' },
