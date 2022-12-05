@@ -13,6 +13,7 @@ lvim.format_on_save = true
 vim.opt.relativenumber = true
 vim.opt.termguicolors = true
 vim.opt.clipboard = "unnamedplus"
+vim.opt.termguicolors = true
 --------------------------------------------------------------------------------------
 
 -- EXPERIMENTAL ----------------------------------------------------------------------
