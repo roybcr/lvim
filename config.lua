@@ -38,15 +38,20 @@ lvim.keys.normal_mode["<A-down>"] = ":move +1<CR>" -- Move line down on Alt + Do
 lvim.keys.normal_mode["<S-x>"] = ":BufferKill<CR>" -- Kill current buffer on Shift + X
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
+lvim.keys.normal_mode["<A-p>"] = ":BufferLineTogglePin<CR>" -- Pin current buffer on Alt + P
 ----------------------------------------------------------------------------------------
 
 -- BUILTINS --------------------------------------------------------------------------
 lvim.builtin.terminal.shell = "/usr/bin/zsh"
 
 -- ColorScheme:
--- To set Tokyonight simply uncomment the line below
 lvim.colorscheme = "melange"
--- lvim.builtin.tokyonight.style = "night"
+-- vim.o.background = "dark"
+--
+-- To set Tokyonight simply uncomment the line below
+-- lvim.colorscheme = "melange"
+-- lvim.colorscheme = "tokyonight-night"
+-- lvim.builtin.theme.tokyonight.options.style = "night"
 vim.g.tokyonight_italic_keywords = false
 vim.g.tokyonight_italic_functions = false
 -- lvim.builtin.theme.options.style = "OceanicNext"
@@ -66,6 +71,8 @@ lvim.builtin.terminal.active = true
 lvim.builtin.alpha.mode = "dashboard"
 lvim.builtin.nvimtree.setup.view.width = 40
 lvim.builtin.nvimtree.setup.view.side = "left"
+lvim.builtin.nvimtree.setup.view.auto_resize = true
+lvim.builtin.nvimtree.setup.renderer.indent_markers.enable = true
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = true
 lvim.builtin.nvimtree.setup.renderer.icons.show.folder = false
 --------------------------------------------------------------------------------------
@@ -177,7 +184,9 @@ formatters.setup {
 
 lvim.plugins = {
   { "savq/melange" },
+  { "rebelot/kanagawa.nvim" },
   { "navarasu/onedark.nvim" },
+  { "NvChad/nvim-colorizer.lua" },
   { "lunarvim/colorschemes" },
   { "shaunsingh/moonlight.nvim" },
   { "marko-cerovac/material.nvim" },
@@ -200,7 +209,7 @@ lvim.plugins = {
           HACK = { icon = " ", color = "warning" },
           WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
           PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
-          NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
+          NOTE = { icon = "🗲 ", color = "note", alt = { "INFO" } },
         },
 
         colors = {
@@ -209,6 +218,7 @@ lvim.plugins = {
           info = { "LspDiagnosticsDefaultInformation", "#2563EB" },
           hint = { "LspDiagnosticsDefaultHint", "#10B981" },
           default = { "Identifier", "#7C3AED" },
+          note = { "LspDiagnosticsDefaultNote", "#C89869" },
         },
 
         search = {
@@ -228,6 +238,14 @@ lvim.plugins = {
       }
     end
   },
+  {
+    "max397574/colortils.nvim",
+    cmd = "Colortils",
+    config = function()
+      require("colortils").setup()
+    end
+  },
+
   -- {
   --   "simrat39/rust-tools.nvim",
   --   config = function()
